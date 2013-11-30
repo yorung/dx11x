@@ -10,6 +10,31 @@
 HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+HWND hWnd;
+
+// WindowMessage
+static BOOL ProcessWindowMessage(){
+	MSG msg;
+	for (;;){
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
+			if (msg.message == WM_QUIT){
+				return FALSE;
+			}
+
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		BOOL active = !IsIconic(hWnd) && GetForegroundWindow() == hWnd;
+
+		if (!active){
+			WaitMessage();
+			continue;
+		}
+
+		return TRUE;
+	}
+}
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -25,10 +50,6 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
- 	// TODO: Place code here.
-	MSG msg;
-	HACCEL hAccelTable;
-
 	// Initialize global strings
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_DX11X, szWindowClass, MAX_LOADSTRING);
@@ -40,19 +61,20 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 	}
 
-	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_DX11X));
+	deviceMan11.Create(hWnd);
 
 	// Main message loop:
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+	for (;;) {
+		if (!ProcessWindowMessage()) {
+			break;
 		}
+		deviceMan11.BeginScene();
+		deviceMan11.EndScene();
+		Sleep(1);
 	}
 
-	return (int) msg.wParam;
+	deviceMan11.Destroy();
+	return 0;
 }
 
 
@@ -95,8 +117,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
-
    hInst = hInstance; // Store instance handle in our global variable
 
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
