@@ -8,6 +8,8 @@
 #include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define _CRT_SECURE_NO_WARNINGS
+
 // Windows Header Files:
 #include <windows.h>
 
@@ -16,13 +18,29 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+#include <stdio.h>
+#include <string.h>
+
+// C++
+#include <algorithm>
+#include <map>
+#include <vector>
 
 // DirectX
 #include <d3d11.h>
+#include <D3Dcompiler.h>
 #include <directxmath.h>
+#include <DirectXTex.h>
+using namespace DirectX;
 
 // TODO: reference additional headers your program requires here
 #include "source/device_man11.h"
+#include "source/tex_man11.h"
+#include "source/shader_man11.h"
+#include "source/mat_man.h"
+#include "source/matrix_man.h"
+#include "source/mesh_renderer11.h"
+#include "source/mesh_x.h"
 
 #define dimof(x) (sizeof(x) / sizeof(x[0]))
 
