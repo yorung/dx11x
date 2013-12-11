@@ -2,6 +2,9 @@
 
 This example shows how to implement X-file skinning animation without D3DX.
 
+![tiny](tiny.png)
+![jiji](jiji.png)
+
 ## Compiling
 
 * Visual Studio 2013 required.
