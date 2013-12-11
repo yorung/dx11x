@@ -63,16 +63,23 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	deviceMan11.Create(hWnd);
 
+	App app;
+	app.Init();
+
 	// Main message loop:
 	for (;;) {
 		if (!ProcessWindowMessage()) {
 			break;
 		}
 		deviceMan11.BeginScene();
+		app.Draw();
 		deviceMan11.EndScene();
 		Sleep(1);
 	}
 
+	app.Destroy();
+	texMan.Destroy();
+	shaderMan.Destroy();
 	deviceMan11.Destroy();
 	return 0;
 }
@@ -119,8 +126,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
 
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+   RECT r;
+   SetRect(&r, 0, 0, SCR_W, SCR_H);
+   AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, FALSE);
+   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+	   CW_USEDEFAULT, CW_USEDEFAULT, r.right - r.left, r.bottom - r.top, NULL, NULL, hInstance, NULL);
 
    if (!hWnd)
    {

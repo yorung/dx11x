@@ -42,6 +42,8 @@ using namespace DirectX;
 #include "source/mesh_renderer11.h"
 #include "source/mesh_x.h"
 
+#include "source/app.h"
+
 #define dimof(x) (sizeof(x) / sizeof(x[0]))
 
 #define SAFE_DELETE(p)       { if (p) { delete (p);     (p)=NULL; } }

@@ -71,17 +71,21 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>%DIRECTXTEX_DIR%;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>%DIRECTXTEX_DIR%\Bin\Desktop_2013\Win32\Release</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="dx11x.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="source\app.h" />
     <ClInclude Include="source\device_man11.h" />
     <ClInclude Include="source\matrix_man.h" />
     <ClInclude Include="source\mat_man.h" />
@@ -94,6 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dx11x.cpp" />
+    <ClCompile Include="source\app.cpp" />
     <ClCompile Include="source\device_man11.cpp" />
     <ClCompile Include="source\matirx_man.cpp" />
     <ClCompile Include="source\mat_man.cpp" />
