@@ -130,6 +130,7 @@ private:
 	Block m_block;
 	int m_animTicksPerSecond;
 public:
+	const Block& GetRawDatas() const { return m_block; }
 	MeshX(const char *fileName);
 	~MeshX();
 	void Draw(int animId, double time);

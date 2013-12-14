@@ -1,5 +1,6 @@
 class App {
 	MeshX* mesh;
+	float radius;
 public:
 	App();
 	~App();
