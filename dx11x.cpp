@@ -13,6 +13,12 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 HWND hWnd;
 static App app;
 
+// Forward declarations of functions included in this code module:
+ATOM				MyRegisterClass(HINSTANCE hInstance);
+BOOL				InitInstance(HINSTANCE, int);
+LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
+
 // WindowMessage
 static BOOL ProcessWindowMessage(){
 	MSG msg;
@@ -37,11 +43,18 @@ static BOOL ProcessWindowMessage(){
 	}
 }
 
-// Forward declarations of functions included in this code module:
-ATOM				MyRegisterClass(HINSTANCE hInstance);
-BOOL				InitInstance(HINSTANCE, int);
-LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
+static void GoMyDir()
+{
+	char dir[MAX_PATH];
+	GetModuleFileNameA(GetModuleHandleA(nullptr), dir, MAX_PATH);
+	char* p = strrchr(dir, '\\');
+	assert(p);
+	*p = '\0';
+	p = strrchr(dir, '\\');
+	assert(p);
+	*p = '\0';
+	SetCurrentDirectoryA(dir);
+}
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -50,6 +63,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	GoMyDir();
 
 	// Initialize global strings
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
