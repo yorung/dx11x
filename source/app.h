@@ -4,7 +4,7 @@ class App {
 public:
 	App();
 	~App();
-	void Init();
+	void Init(const char* fileName);
 	void Draw();
 	void Destroy();
 };

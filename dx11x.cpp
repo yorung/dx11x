@@ -11,6 +11,7 @@ HINSTANCE hInst;								// current instance
 TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 HWND hWnd;
+static App app;
 
 // WindowMessage
 static BOOL ProcessWindowMessage(){
@@ -63,8 +64,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	deviceMan11.Create(hWnd);
 
-	App app;
-	app.Init();
+	app.Init(".//jiji.x");
 
 	// Main message loop:
 	for (;;) {
@@ -140,6 +140,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
+   DragAcceptFiles(hWnd, TRUE);
+
    return TRUE;
 }
 
@@ -182,6 +184,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// TODO: Add any drawing code here...
 		EndPaint(hWnd, &ps);
 		break;
+	case WM_DROPFILES:
+		{
+			HDROP hDrop = (HDROP)wParam;
+			char fileName[MAX_PATH];
+			DragQueryFileA(hDrop, 0, fileName, MAX_PATH);
+			DragFinish(hDrop);
+			app.Init(fileName);
+			break;
+		}
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

@@ -11,7 +11,7 @@ static float CalcRadius(const MeshX* m)
 	return sqrt(maxSq);
 }
 
-App::App() : radius(0)
+App::App() : radius(0), mesh(nullptr)
 {
 }
 
@@ -19,10 +19,11 @@ App::~App()
 {
 }
 
-void App::Init()
+void App::Init(const char* fileName)
 {
-	mesh = new MeshX(".\\jiji.x");
-//	mesh = new MeshX("C:\\Program Files (x86)\\Microsoft DirectX SDK (August 2009)\\Samples\\Media\\Tiny\\tiny.x");
+	Destroy();
+
+	mesh = new MeshX(fileName);
 	radius = CalcRadius(mesh);
 
 	matrixMan.Set(MatrixMan::PROJ, XMMatrixPerspectiveFovLH(45 * XM_PI / 180, (float)SCR_W / SCR_H, 0.1f, 1000.0f));
@@ -50,5 +51,5 @@ void App::Draw()
 
 void App::Destroy()
 {
-	delete mesh;
+	SAFE_DELETE(mesh);
 }
