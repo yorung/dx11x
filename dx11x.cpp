@@ -193,6 +193,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			app.Init(fileName);
 			break;
 		}
+	case WM_LBUTTONDOWN:
+		app.LButtonDown(LOWORD(lParam) / (float)SCR_W, HIWORD(lParam) / (float)SCR_H);
+		break;
+	case WM_LBUTTONUP:
+		app.LButtonUp(LOWORD(lParam) / (float)SCR_W, HIWORD(lParam) / (float)SCR_H);
+		break;
+	case WM_MOUSEMOVE:
+		app.MouseMove(LOWORD(lParam) / (float)SCR_W, HIWORD(lParam) / (float)SCR_H);
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

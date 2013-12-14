@@ -11,8 +11,9 @@ static float CalcRadius(const MeshX* m)
 	return sqrt(maxSq);
 }
 
-App::App() : radius(0), mesh(nullptr)
+App::App() : radius(0), mesh(nullptr), lastX(-1), lastY(-1)
 {
+	quat = XMQuaternionIdentity();
 }
 
 App::~App()
@@ -29,6 +30,37 @@ void App::Init(const char* fileName)
 	matrixMan.Set(MatrixMan::PROJ, XMMatrixPerspectiveFovLH(45 * XM_PI / 180, (float)SCR_W / SCR_H, 0.1f, 1000.0f));
 }
 
+void App::LButtonDown(float x, float y)
+{
+	lastX = x;
+	lastY = y;
+}
+void App::LButtonUp(float x, float y)
+{
+	MouseMove(x, y);
+	lastX = lastY = -1;
+}
+void App::MouseMove(float x, float y)
+{
+	if (lastX < 0 || lastY < 0) {
+		return;
+	}
+	float dx = x - lastX;
+	float dy = - (y - lastY);
+
+	lastX = x;
+	lastY = y;
+
+	XMVECTOR axis = XMVectorSet(-dy, dx, 0, 0);
+	float len = XMVectorGetX(XMVector2Length(axis));
+	if (!len) {
+		return;
+	}
+
+	XMVECTOR q = XMQuaternionRotationAxis(axis, len * -2 * XM_PI);
+	quat = XMQuaternionMultiply(quat, q);
+}
+
 void App::Draw()
 {
 	LARGE_INTEGER t, f;
@@ -37,13 +69,15 @@ void App::Draw()
 	float time = (float)((double)t.QuadPart / f.QuadPart);
 	float scale = 1 / radius;
 
-	XMMATRIX mRot = XMMatrixRotationQuaternion(XMQuaternionRotationAxis(XMVectorSet(1, 0, 0, 0), time / 2 * XM_PI));
+//	XMMATRIX mRot = XMMatrixRotationQuaternion(XMQuaternionRotationAxis(XMVectorSet(1, 0, 0, 0), time / 2 * XM_PI));
+	XMMATRIX mRot = XMMatrixRotationQuaternion(quat);
 	XMMATRIX mScale = XMMatrixScaling(scale, scale, scale);
 
 	matrixMan.Set(MatrixMan::WORLD, mScale * mRot);
 
 	float dist = 3;
-	float rot = time / 5 * XM_PI;
+//	float rot = time / 5 * XM_PI;
+	float rot = XM_PI;
 	matrixMan.Set(MatrixMan::VIEW, XMMatrixLookAtLH(XMVectorSet(sin(rot) * dist, 0, cos(rot) * dist, 1), XMVectorSet(0, 0, 0, 0), XMVectorSet(0, 1, 0, 0)));
 
 	mesh->Draw(0, time);
