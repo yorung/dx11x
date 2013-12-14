@@ -202,6 +202,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		app.MouseMove(LOWORD(lParam) / (float)SCR_W, HIWORD(lParam) / (float)SCR_H);
 		break;
+	case WM_MOUSEWHEEL:
+		app.MouseWheel((short)HIWORD(wParam) / (float)WHEEL_DELTA);
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
