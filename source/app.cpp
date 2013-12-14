@@ -25,7 +25,8 @@ void App::Init(const char* fileName)
 	Destroy();
 
 	mesh = new MeshX(fileName);
-	scale = 1 / CalcRadius(mesh);
+	float radius = CalcRadius(mesh);
+	scale = 1 / std::max(0.00001f, radius);
 
 	matrixMan.Set(MatrixMan::PROJ, XMMatrixPerspectiveFovLH(45 * XM_PI / 180, (float)SCR_W / SCR_H, 0.1f, 1000.0f));
 }
