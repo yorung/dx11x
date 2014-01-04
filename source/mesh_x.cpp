@@ -653,9 +653,8 @@ void MeshX::ParseFrame(char* p, BONE_ID parentFrameId)
 	}
 }
 
-void MeshX::PrintStatistics() const
+void MeshX::GetStatistics(std::vector<int>& cnts) const
 {
-	std::vector<int> cnts;
 	cnts.resize(m_frames.size());
 	for (auto& it : cnts) {
 		it = 0;
@@ -675,15 +674,84 @@ void MeshX::PrintStatistics() const
 		if (it.blendWeights.z > 0) {
 			cnts[it.blendIndices.z]++;
 		}
-		if (it.blendWeights.x + it.blendWeights.y + it.blendWeights.z <= 0.999f) {
+		if (it.blendWeights.x + it.blendWeights.y + it.blendWeights.z < 1.0f) {
 			cnts[it.blendIndices.w]++;
 		}
 	}
+}
+
+void MeshX::PrintStatistics() const
+{
+	std::vector<int> cnts;
+	GetStatistics(cnts);
 	for (BONE_ID i = 0; i < (BONE_ID)m_frames.size(); i++)
 	{
 		const Frame& f = m_frames[i];
 		int cnt = cnts[i];
 		printf("%d verts, parentId=%d, childId=%d, %s(%d)\n", cnt, f.parentId, f.childId, f.name, i);
+	}
+}
+
+bool MeshX::UnlinkFrame(BONE_ID id)
+{
+	Frame& f = m_frames[id];
+	if (f.childId >= 0) {
+		return false;
+	}
+	if (f.parentId < 0) {
+		return false;
+	}
+	Frame& p = m_frames[f.parentId];
+	if (p.childId == id) {
+		p.childId = f.siblingId;
+	} else {
+		Frame* mySibling = &m_frames[p.childId];
+		do {
+			if (mySibling->siblingId == id)
+			{
+				mySibling->siblingId = f.siblingId;
+			}
+			mySibling = &m_frames[mySibling->siblingId];
+		} while (mySibling);
+	}
+	f.parentId = -1;
+
+	for (auto& i : m_animationSets) {
+		auto& j = i.animations.find(id);
+		if (j != i.animations.end()) {
+			i.animations.erase(j);
+		}
+	}
+
+	return true;
+}
+
+void MeshX::DeleteDummyFrames()
+{
+	std::vector<int> cnts;
+	GetStatistics(cnts);
+
+	bool deleted = false;
+	do {
+		deleted = false;
+		GetStatistics(cnts);
+		for (BONE_ID i = 0; i < (BONE_ID)m_frames.size(); i++)
+		{
+			const Frame& f = m_frames[i];
+			int cnt = cnts[i];
+			if (cnt) {
+				continue;
+			}
+			if (f.childId >= 0)
+			{
+				continue;
+			}
+			deleted = UnlinkFrame(i);
+		}
+	} while(deleted);
+
+	while (!m_frames.empty() && m_frames.rbegin()->parentId < 0 && m_frames.rbegin()->childId < 0) {
+		m_frames.erase(m_frames.end() - 1);
 	}
 }
 
@@ -833,6 +901,16 @@ void MeshX::LoadSub(const char *fileName)
 	}
 
 	free(img);
+
+	printf("===============DumpFrames begin\n");
+	DumpFrames(0, 0);
+	printf("===============DumpFrames end\n");
+
+	printf("===============DumpStatistics begin\n");
+	PrintStatistics();
+	printf("===============DumpStatistics end\n");
+
+	DeleteDummyFrames();
 
 	printf("===============DumpFrames begin\n");
 	DumpFrames(0, 0);
