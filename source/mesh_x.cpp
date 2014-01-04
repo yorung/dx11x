@@ -653,6 +653,40 @@ void MeshX::ParseFrame(char* p, BONE_ID parentFrameId)
 	}
 }
 
+void MeshX::PrintStatistics() const
+{
+	std::vector<int> cnts;
+	cnts.resize(m_frames.size());
+	for (auto& it : cnts) {
+		it = 0;
+	}
+	for (auto& it : m_block.vertices)
+	{
+		assert(it.blendIndices.x >= 0 && it.blendIndices.x < m_frames.size());
+		assert(it.blendIndices.y >= 0 && it.blendIndices.y < m_frames.size());
+		assert(it.blendIndices.z >= 0 && it.blendIndices.z < m_frames.size());
+		assert(it.blendIndices.w >= 0 && it.blendIndices.w < m_frames.size());
+		if (it.blendWeights.x > 0) {
+			cnts[it.blendIndices.x]++;
+		}
+		if (it.blendWeights.y > 0) {
+			cnts[it.blendIndices.y]++;
+		}
+		if (it.blendWeights.z > 0) {
+			cnts[it.blendIndices.z]++;
+		}
+		if (it.blendWeights.x + it.blendWeights.y + it.blendWeights.z <= 0.999f) {
+			cnts[it.blendIndices.w]++;
+		}
+	}
+	for (BONE_ID i = 0; i < (BONE_ID)m_frames.size(); i++)
+	{
+		const Frame& f = m_frames[i];
+		int cnt = cnts[i];
+		printf("%d verts, parentId=%d, childId=%d, %s(%d)\n", cnt, f.parentId, f.childId, f.name, i);
+	}
+}
+
 void MeshX::DumpFrames(BONE_ID frameId, int depth) const
 {
 	const Frame& f = m_frames[frameId];
@@ -804,6 +838,9 @@ void MeshX::LoadSub(const char *fileName)
 	DumpFrames(0, 0);
 	printf("===============DumpFrames end\n");
 
+	printf("===============DumpStatistics begin\n");
+	PrintStatistics();
+	printf("===============DumpStatistics end\n");
 }
 
 MeshX::~MeshX()

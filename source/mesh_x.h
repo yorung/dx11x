@@ -124,6 +124,7 @@ private:
 	void CalcAnimation(int animId, double time);
 	void CalcFrameMatrices(BONE_ID frameId, XMMATRIX& parent);
 	void DumpFrames(BONE_ID frameId, int depth) const;
+	void PrintStatistics() const;
 
 	std::vector<Frame> m_frames;
 	std::vector<AnimationSet> m_animationSets;
