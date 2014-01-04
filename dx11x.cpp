@@ -81,7 +81,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE,
 
 	deviceMan11.Create(hWnd);
 
-	app.Init(".//jiji.x");
+//	app.Init(".//jiji.x");
+	app.Init("C:\\Program Files (x86)\\Microsoft DirectX SDK (August 2009)\\Samples\\Media\\Tiny\\tiny.x");
 
 	// Main message loop:
 	for (;;) {
