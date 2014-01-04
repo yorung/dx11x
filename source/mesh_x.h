@@ -125,7 +125,8 @@ private:
 	void CalcFrameMatrices(BONE_ID frameId, XMMATRIX& parent);
 	void DumpFrames(BONE_ID frameId, int depth) const;
 	void PrintStatistics() const;
-	void GetStatistics(std::vector<int>& cnts) const;
+	void GetVertStatistics(std::vector<int>& cnts) const;
+	void GetAnimStatistics(std::vector<int>& animCnts) const;
 	void DeleteDummyFrames();
 	bool UnlinkFrame(BONE_ID id);
 

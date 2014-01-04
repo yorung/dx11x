@@ -653,7 +653,7 @@ void MeshX::ParseFrame(char* p, BONE_ID parentFrameId)
 	}
 }
 
-void MeshX::GetStatistics(std::vector<int>& cnts) const
+void MeshX::GetVertStatistics(std::vector<int>& cnts) const
 {
 	cnts.resize(m_frames.size());
 	for (auto& it : cnts) {
@@ -680,15 +680,30 @@ void MeshX::GetStatistics(std::vector<int>& cnts) const
 	}
 }
 
+void MeshX::GetAnimStatistics(std::vector<int>& animCnts) const
+{
+	animCnts.resize(m_frames.size());
+	for (auto& it : animCnts) {
+		it = 0;
+	}
+	for (auto& i : m_animationSets) {
+		for (auto& j : i.animations) {
+			assert(j.first >= 0 && j.first < (BONE_ID)m_frames.size());
+			animCnts[j.first]++;
+		}
+	}
+}
+
 void MeshX::PrintStatistics() const
 {
-	std::vector<int> cnts;
-	GetStatistics(cnts);
+	std::vector<int> vCnts;
+	GetVertStatistics(vCnts);
+	std::vector<int> aCnts;
+	GetAnimStatistics(aCnts);
 	for (BONE_ID i = 0; i < (BONE_ID)m_frames.size(); i++)
 	{
 		const Frame& f = m_frames[i];
-		int cnt = cnts[i];
-		printf("%d verts, parentId=%d, childId=%d, %s(%d)\n", cnt, f.parentId, f.childId, f.name, i);
+		printf("v=%d a=%d, parentId=%d, childId=%d, %s(%d)\n", vCnts[i], aCnts[i], f.parentId, f.childId, f.name, i);
 	}
 }
 
@@ -729,12 +744,11 @@ bool MeshX::UnlinkFrame(BONE_ID id)
 void MeshX::DeleteDummyFrames()
 {
 	std::vector<int> cnts;
-	GetStatistics(cnts);
 
 	bool deleted = false;
 	do {
 		deleted = false;
-		GetStatistics(cnts);
+		GetVertStatistics(cnts);
 		for (BONE_ID i = 0; i < (BONE_ID)m_frames.size(); i++)
 		{
 			const Frame& f = m_frames[i];
@@ -774,11 +788,11 @@ void MeshX::DumpFrames(BONE_ID frameId, int depth) const
 		}
 	}
 	printf("\n");
-	if (f.siblingId >= 0) {
-		DumpFrames(f.siblingId, depth);
-	}
 	if (f.childId >= 0) {
 		DumpFrames(f.childId, depth + 1);
+	}
+	if (f.siblingId >= 0) {
+		DumpFrames(f.siblingId, depth);
 	}
 }
 
