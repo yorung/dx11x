@@ -10,8 +10,8 @@ This example shows how to implement X-file skinning animation without D3DX.
 Visual Studio 2013 community required.
 Before open the solution file, type below from Git Bash to get DirectXTK.
 
- git submodule init
- git submodule update
+### git submodule init
+### git submodule update
 
 That's it! Then, open dx11x.sln and build it:)
 
